@@ -35,6 +35,7 @@ resource "azapi_resource" "ubuntu_standard_image" {
           min = var.ubuntu_standard_image_definition.vcpus_min
         }
       }
+      hyperVGeneration = var.ubuntu_standard_image_definition.hyperVGeneration
     }
   }
 }
@@ -70,6 +71,7 @@ resource "azapi_resource" "ubuntu_minimal_image" {
           min = var.ubuntu_minimal_image_definition.vcpus_min
         }
       }
+      hyperVGeneration = var.ubuntu_minimal_image_definition.hyperVGeneration
     }
   }
 }

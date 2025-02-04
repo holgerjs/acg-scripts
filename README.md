@@ -52,3 +52,24 @@ In order to deploy the Azure Compute Gallery with terraform, the following comma
     ```
 
   If the deployment plan looks ok, confirm the deployment.
+
+### Common Issues
+
+It is not possible to update the hypervisor generation configuration. If this configuration needs to be modified, the image definition needs to be re-created, or, a new image definition needs to be created.
+
+The following error message might be seen:
+
+```bash
+--------------------------------------------------------------------------------
+RESPONSE 409: 409 Conflict
+ERROR CODE: PropertyChangeNotAllowed
+--------------------------------------------------------------------------------
+{
+  "error": {
+    "code": "PropertyChangeNotAllowed",
+    "message": "Changing property 'galleryImage.properties.hyperVGeneration' is not allowed.",
+    "target": "galleryImage.properties.hyperVGeneration"
+  }
+}
+--------------------------------------------------------------------------------
+```

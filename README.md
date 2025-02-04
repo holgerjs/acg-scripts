@@ -53,6 +53,21 @@ In order to deploy the Azure Compute Gallery with terraform, the following comma
 
   If the deployment plan looks ok, confirm the deployment.
 
+### Scripts
+
+The script `Add-ImageToGallery.ps1` adds managed images to a compute gallery. It could also be used to copy an image from one compute gallery to another. It is pretty simple and basically wrapped around the `New-AzGalleryImageVersion` cmdlet.
+
+```azurepowershell
+New-AzGalleryImageVersion -ResourceGroupName RESOURCE_GROUP_NAME `
+                          -GalleryName GALLERY_NAME `
+                          -GalleryImageDefinitionName GALLERY_IMAGE_DEFINITION_NAME `
+                          -Name VERSION_NAME `
+                          -Location LOCATION `
+                          -SourceImageId IMAGE_RESOURCE_ID
+```
+
+IMAGE_RESOURCE_ID can either be the resource id of a standalone image (type: `Microsoft.Compute/images`) or the resource id of a compute gallery image version (type: `Microsoft.Compute/galleries/images`).
+
 ### Common Issues
 
 It is not possible to update the hypervisor generation configuration. If this configuration needs to be modified, the image definition needs to be re-created, or, a new image definition needs to be created.

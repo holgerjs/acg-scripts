@@ -16,7 +16,7 @@ The name of the Azure compute gallery.
 The name of the gallery image definition.
 
 .PARAMETER ManagedImageResourceId
-The resource ID of the managed image to be added to the gallery.
+The resource ID of the managed image to be added to the gallery. This can either be the resource id of a managed image or a gallery image.
 
 .PARAMETER GalleryImageVersionName
 The name of the new gallery image version to be created. If not provided, a new version name will be generated based on the current year and month.
@@ -98,8 +98,8 @@ catch {
     exit
 }
 
-if($managedImageObj.ResourceType -ne "Microsoft.Compute/images") {
-    Write-Host "The provided resource is not a managed image."
+if($managedImageObj.ResourceType -ne "Microsoft.Compute/images" -and $managedImageObj.ResourceType -ne "Microsoft.Compute/galleries/images") {
+    Write-Host "The provided resource is not a managed image or a gallery image."
     exit
 }
 else {

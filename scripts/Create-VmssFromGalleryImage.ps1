@@ -1,3 +1,35 @@
+<#
+.SYNOPSIS
+Creates a Virtual Machine Scale Set (VMSS) from a specified gallery image.
+
+.DESCRIPTION
+This script automates the process of creating a Virtual Machine Scale Set (VMSS) using a specified image from an Azure Shared Image Gallery. It allows for customization of various parameters such as the resource group, VMSS name, instance count, and more.
+
+.PARAMETER ResourceGroupName
+Specifies the name of the resource group where the VMSS will be created.
+
+.PARAMETER VmssName
+Specifies the name of the Virtual Machine Scale Set.
+
+.PARAMETER ImageGalleryName
+Specifies the name of the Shared Image Gallery containing the image to be used.
+
+.PARAMETER ImageDefinitionName
+Specifies the name of the image definition within the Shared Image Gallery.
+
+.PARAMETER ImageVersion
+Specifies the version of the image to be used.
+
+.PARAMETER InstanceCount
+Specifies the number of instances to be created in the VMSS.
+
+.PARAMETER VmSize
+Specifies the size of the virtual machines in the VMSS.
+
+.EXAMPLE
+.\Create-VmssFromGalleryImage.ps1 -ResourceGroupName "MyResourceGroup" -VmssName "MyVmss" -ImageGalleryName "MyGallery" -ImageDefinitionName "MyImage" -ImageVersion "1.0.0" -InstanceCount 3 -VmSize "Standard_DS1_v2"
+#>
+
 [CmdletBinding()]
 param (
     [Parameter(Mandatory=$true)]

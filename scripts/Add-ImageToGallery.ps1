@@ -19,7 +19,7 @@ The name of the gallery image definition.
 The resource ID of the managed image to be added to the gallery.
 
 .PARAMETER GalleryImageVersionName
-The name of the new gallery image version to be created.
+The name of the new gallery image version to be created. If not provided, a new version name will be generated based on the current year and month.
 
 .EXAMPLE
 .\Add-ImageToGallery.ps1 -ResourceGroupName "myResourceGroup" -GalleryName "myGallery" -GalleryImageDefinitionName "myImageDefinition" -ManagedImageResourceId "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/images/myManagedImage" -GalleryImageVersionName "1.0.0"
@@ -42,10 +42,16 @@ param (
     [Parameter(Mandatory=$true)]
     [string]$ManagedImageResourceId,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$false)]
     [string]$GalleryImageVersionName
 )
 
+$boldStart = "`e[1m"
+$boldEnd = "`e[0m"
+
+Write-Host "Adding a new image version to the gallery."
+
+Write-Host "Retrieving gallery image definition for ${boldStart}$GalleryImageDefinitionName${boldEnd} in ${boldStart}$GalleryName${boldEnd} gallery."
 try {
     $galImgDefinitionObj = Get-AzGalleryImageDefinition -ResourceGroupName $ResourceGroupName `
                                                         -GalleryName $GalleryName `
@@ -56,6 +62,34 @@ catch {
     exit
 }
 
+if(!$GalleryImageVersionName) {
+    Write-Host "Generating a new version name for the image since no version was provided."
+    $currentYearMonth = (Get-Date).ToString("yyyy.M")
+    $existingVersions = (Get-AzGalleryImageVersion -ResourceGroupName $ResourceGroupName -GalleryName $GalleryName -GalleryImageDefinitionName $GalleryImageDefinitionName).Name
+    $matchingVersions = $existingVersions | Where-Object { $_ -match "$currentYearMonth\.\d+" }
+
+    if ($matchingVersions) {
+        $increments = $matchingVersions | ForEach-Object {
+            $_ -replace "$currentYearMonth\.", ""
+        } | ForEach-Object {
+            [int]$_
+        } | Sort-Object -Descending
+        
+        $newVersionIncrement = $increments[0] + 1
+    } else {
+        $newVersionIncrement = 1
+    }
+
+    $newVersionName = "$currentYearMonth.$newVersionIncrement"
+}
+else {
+    $newVersionName = $GalleryImageVersionName
+}
+
+Write-Host "Using ${boldStart}$newVersionName${boldEnd} as the new image version name."
+
+
+Write-Host "Retrieving managed image with ID ${boldStart}$ManagedImageResourceId${boldEnd}."
 try {
     $managedImageObj = Get-AzResource -ResourceId $ManagedImageResourceId
 }
@@ -69,11 +103,12 @@ if($managedImageObj.ResourceType -ne "Microsoft.Compute/images") {
     exit
 }
 else {
+    Write-Host "Creating a new image version for the managed image."
     try {
         $newImgVersion = New-AzGalleryImageVersion -ResourceGroupName $ResourceGroupName `
                                                    -GalleryName $GalleryName `
                                                    -GalleryImageDefinitionName $galImgDefinitionObj.Name `
-                                                   -Name $GalleryImageVersionName `
+                                                   -Name $newVersionName `
                                                    -Location $galImgDefinitionObj.Location `
                                                    -SourceImageId $ManagedImageResourceId   
     }

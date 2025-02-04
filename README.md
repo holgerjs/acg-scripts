@@ -13,7 +13,7 @@ In order to deploy the Azure Compute Gallery with terraform, the following comma
     git clone https://github.com/holgerjs/acg-scripts.git
     ```
 
-2. Modify `terraform/variables.tf` as needed
+2. Modify `terraform/terraform.tfvars` as needed
 3. Initialize Terraform
     
     ```bash
